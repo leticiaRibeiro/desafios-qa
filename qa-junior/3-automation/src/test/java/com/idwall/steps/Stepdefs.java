@@ -136,18 +136,14 @@ public class Stepdefs {
         }
     }
 
-    @When("^Eu acesso os links das imagens dos posts da primeira pagina$")
-    public void acessar_links_das_imagens_dos_posts() {
-        List<WebElement> elements = driver.findElements(By.xpath("//div[@class='penci-wrapper-posts-content']//ul//li//div[@class='thumbnail']//a[@class='penci-image-holder penci-lazy']"));
-        elements.forEach(elemento -> {
-            System.out.println("queque tem aqui? " + elemento.getCssValue("background-image"));
-        });
+	@When("^Eu seleciono uma categoria \"(.*)\"$")
+	public void eu_seleciono_uma_categoria_e_volto_para_a_homepage(String codigo) throws Throwable {
+    	driver.findElement(By.xpath("//select[@id='cat']")).click();
+    	driver.findElement(By.xpath("//option[@value=11]")).click();
+	}
+
+    @Then("^Deve listar os posts da categoria selecionada$")
+    public void deve_listar_os_posts_da_categoria_selecionada() throws Throwable {
         driver.quit();
     }
-
-    @Then("^Haha$")
-    public void haha() {
-        System.out.println("Then das imagens");
-    }
-
 }

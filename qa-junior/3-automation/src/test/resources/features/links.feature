@@ -30,7 +30,12 @@ Scenario: Testar link dos autores dos posts
     When Acessar os links de cada autor
     Then Todos os links devem ser diferentes da URL da homepage
 
-Scenario: Acessar todos os links das imagens dos posts apresentados na pagina inicial
+Scenario Outline: Selecionar uma categoria e retornar a pagina inicial
 	Given Acessar homepage do blog
-	When Eu acesso os links das imagens dos posts da primeira pagina
-	Then Haha
+	When Eu seleciono uma categoria "<codigo>"
+	Then Deve listar os posts da categoria selecionada
+
+    Examples:
+        |categoria	|codigo |
+        |economy	|31 	|
+        |fintech    |11     |
