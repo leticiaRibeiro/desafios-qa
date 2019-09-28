@@ -30,7 +30,7 @@ Scenario: Testar link dos autores dos posts
     When Acessar os links de cada autor
     Then Todos os links devem ser diferentes da URL da homepage
 
-Scenario Outline: Selecionar uma categoria e retornar a pagina inicial
+Scenario Outline: Testar o select de categoria
 	Given Acessar homepage do blog
 	When Eu seleciono uma categoria "<codigo>"
 	Then Deve listar os posts da categoria selecionada

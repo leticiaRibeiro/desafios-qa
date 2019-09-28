@@ -1,5 +1,7 @@
 package com.idwall.steps;
 
+import com.idwall.util.Response;
+import com.idwall.util.TestUtil;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -10,8 +12,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,11 +21,10 @@ public class Stepdefs {
 
     WebDriver driver;
     String homePage = "https://blog.idwall.co/";
-    HttpURLConnection huc = null;
-    int respCode;
     List<String> urls = new ArrayList<>();
     Set<String> urlAutor = new HashSet<>();
     String linkLogo;
+    TestUtil testUtil = new TestUtil();
 
     @Given("^Acessar homepage do blog$")
     public void acessar_home_page() {
@@ -56,24 +55,11 @@ public class Stepdefs {
     @Then("^Todos devem retornar 200$")
     public void todos_devem_funcionar() {
         for (String url : urls) {
-            try {
-                huc = (HttpURLConnection) (new URL(url).openConnection());
-
-                huc.setRequestMethod("HEAD");
-
-                huc.connect();
-
-                respCode = huc.getResponseCode();
-                System.out.println(respCode);
-
-                if (respCode != 200) {
-                    throw new Exception("URL quebrada!");
-                } else {
-                    System.out.println(url + " está OK!");
-                }
-            } catch (Exception e) {
-                Assert.fail(url + " está quebrada! Status code de retorno: "+respCode);
-                e.printStackTrace();
+            Response response = testUtil.testaLink(url);
+            if (response.getStatusCode() != 200) {
+                Assert.fail(url + " está quebrada! Status code de retorno: " + response.getStatusCode());
+            } else {
+                System.out.println(url + " está OK!");
             }
         }
     }
@@ -114,24 +100,12 @@ public class Stepdefs {
     public void nao_devem_enviar_para_homepage() {
         String urlFinal = null;
         for (String url : urlAutor) {
-            try {
-                huc = (HttpURLConnection) (new URL(url).openConnection());
+            Response response = testUtil.testaLink(url);
 
-                huc.setRequestMethod("HEAD");
-
-                huc.connect();
-
-                respCode = huc.getResponseCode();
-                urlFinal = huc.getURL().toString();
-
-                if (respCode != 200 || !url.equals(urlFinal)) {
-                    throw new Exception("URL quebrada!");
-                } else {
-                    System.out.println(url + " está OK!");
-                }
-            } catch (Exception e) {
-                Assert.fail("A url " + url + " redirecionou para " + urlFinal + "; - Status code de retorno: " + respCode);
-                e.printStackTrace();
+            if (response.getStatusCode() != 200 || !url.equals(response.getUrl())) {
+                Assert.fail("A url " + url + " redirecionou para " + response.getUrl() + "; - Status code de retorno: " + response.getStatusCode());
+            } else {
+                System.out.println(url + " está OK!");
             }
         }
     }
